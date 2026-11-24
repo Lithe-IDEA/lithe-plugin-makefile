@@ -1,0 +1,524 @@
+{
+  "schemaVersion": 0,
+  "id": "io.github.lithe-idea.makefile-build",
+  "displayName": "Makefile",
+  "version": "0.0.1",
+  "repository": "https://github.com/Lithe-IDEA/lithe-plugin-makefile",
+  "pluginAPIVersion": 0,
+  "requires": {
+    "backend": 0,
+    "beforeLaunchTasks": 0,
+    "buildProviders": 0,
+    "buildSystems": 0,
+    "runConfigurationTypes": 0,
+    "settings": 0,
+    "toolDefinitions": 1,
+    "ui": 0
+  },
+  "requiresTools": [
+    "make"
+  ],
+  "vendor": {
+    "id": "io.github.lithe-idea",
+    "displayName": "Lithe Community",
+    "signatureRequirement": "none"
+  },
+  "permissions": [
+    "backend.launch",
+    "languageServer.launch",
+    "process.build",
+    "ui.contribute"
+  ],
+  "activationEvents": [
+    "onBuildSystem:makefile"
+  ],
+  "settingRegions": [
+    {
+      "id": "makefile",
+      "page": {
+        "buildSystemID": "makefile"
+      },
+      "keywords": [
+        "make",
+        "gmake",
+        "GNUmakefile",
+        "Makefile",
+        "toolchain",
+        "lookup order",
+        "PATH"
+      ],
+      "view": {
+        "function": "settings.view"
+      }
+    }
+  ],
+  "languages": [],
+  "buildSystems": [
+    {
+      "id": "makefile",
+      "displayName": "Makefile",
+      "icon": {
+        "path": "icons/makefile.svg",
+        "darkPath": "icons/makefile-dark.svg",
+        "mode": "original"
+      },
+      "detection": {
+        "markers": [
+          "GNUmakefile",
+          "Makefile",
+          "makefile"
+        ],
+        "nesting": "separate",
+        "priority": 40
+      },
+      "invocation": {
+        "executables": [
+          {
+            "id": "toolchain",
+            "kind": "toolchain",
+            "toolchainID": "make"
+          }
+        ]
+      },
+      "provider": {
+        "launch": {
+          "kind": "packaged",
+          "path": "bin/backend"
+        },
+        "executesProjectCode": true,
+        "mayUseNetwork": false
+      },
+      "options": [
+        {
+          "id": "file",
+          "displayName": "Makefile",
+          "kind": "file",
+          "description": "Use a specific Makefile instead of the default GNUmakefile, Makefile, or makefile in the project root.",
+          "arguments": [
+            "-f",
+            "${value}"
+          ]
+        },
+        {
+          "id": "jobs",
+          "displayName": "Parallel Jobs",
+          "kind": "text",
+          "description": "Maximum number of jobs to run simultaneously (-j). Leave empty to run sequentially.",
+          "arguments": [
+            "-j",
+            "${value}"
+          ]
+        },
+        {
+          "id": "alwaysMake",
+          "displayName": "Always Make (-B)",
+          "kind": "boolean",
+          "description": "Unconditionally make all targets, ignoring timestamps.",
+          "arguments": [
+            "-B"
+          ]
+        },
+        {
+          "id": "dryRun",
+          "displayName": "Dry Run (-n)",
+          "kind": "boolean",
+          "description": "Print the recipes that would be executed, without executing them.",
+          "arguments": [
+            "-n"
+          ]
+        },
+        {
+          "id": "keepGoing",
+          "displayName": "Keep Going (-k)",
+          "kind": "boolean",
+          "description": "Continue as much as possible after an error instead of stopping immediately.",
+          "arguments": [
+            "-k"
+          ]
+        }
+      ],
+      "model": {
+        "source": "provider"
+      },
+      "tasks": [
+        {
+          "id": "run-target",
+          "displayName": "Run Target",
+          "description": "Run the selected Makefile target.",
+          "group": "build",
+          "scopes": [
+            "target"
+          ],
+          "source": "provider",
+          "arguments": []
+        },
+        {
+          "id": "default",
+          "displayName": "Default Goal",
+          "description": "Run make with no explicit target (the Makefile's default goal).",
+          "group": "build",
+          "scopes": [
+            "project"
+          ],
+          "source": "provider",
+          "arguments": []
+        }
+      ],
+      "run": [
+        {
+          "id": "target",
+          "fromTargets": {
+            "tags": [
+              "target"
+            ]
+          },
+          "configurationType": "target",
+          "values": {
+            "targets": [
+              "${target.name}"
+            ]
+          }
+        }
+      ],
+      "runConfigurationTypes": [
+        {
+          "id": "target",
+          "displayName": "Makefile Target",
+          "description": "Runs one or more Makefile targets with optional variables and make flags.",
+          "icon": {
+            "path": "icons/makefile.svg",
+            "darkPath": "icons/makefile-dark.svg",
+            "mode": "original"
+          },
+          "execution": "task",
+          "fields": [
+            {
+              "id": "targets",
+              "title": "Targets",
+              "description": "One or more target names separated by spaces, such as run, dev, or run dev.",
+              "kind": "arguments",
+              "placeholder": "run dev",
+              "required": true
+            },
+            {
+              "id": "makefile",
+              "title": "Makefile",
+              "description": "Optional Makefile path passed with -f. Leave empty to use the default Makefile in the working directory.",
+              "kind": "file",
+              "arguments": [
+                "-f",
+                "${value}"
+              ]
+            },
+            {
+              "id": "variables",
+              "title": "Variables",
+              "description": "Variable overrides passed to make, such as ENV=dev PORT=8080.",
+              "kind": "arguments",
+              "placeholder": "ENV=dev"
+            },
+            {
+              "id": "makeArguments",
+              "title": "Make arguments",
+              "description": "Additional flags passed to make before the targets, such as -j4 or -B.",
+              "kind": "arguments",
+              "placeholder": "-j4"
+            }
+          ],
+          "arguments": [
+            "${optionArguments}",
+            "${field:makefile}",
+            "${field:makeArguments}",
+            "${field:targets}",
+            "${field:variables}",
+            "${userArguments}"
+          ]
+        }
+      ],
+      "beforeLaunchTasks": [
+        {
+          "id": "run-target",
+          "displayName": "Run Makefile Target",
+          "description": "Runs one or more Makefile targets before launching the run configuration.",
+          "icon": {
+            "path": "icons/makefile.svg",
+            "darkPath": "icons/makefile-dark.svg",
+            "mode": "original"
+          },
+          "fields": [
+            {
+              "id": "targets",
+              "title": "Targets",
+              "description": "One or more Makefile target names separated by spaces, such as generate or build.",
+              "kind": "arguments",
+              "placeholder": "generate",
+              "required": true
+            },
+            {
+              "id": "makefile",
+              "title": "Makefile",
+              "description": "Optional Makefile path passed with -f.",
+              "kind": "file",
+              "arguments": [
+                "-f",
+                "${value}"
+              ]
+            },
+            {
+              "id": "variables",
+              "title": "Variables",
+              "description": "Variable overrides passed to make, such as CGO_ENABLED=0.",
+              "kind": "arguments"
+            },
+            {
+              "id": "makeArguments",
+              "title": "Make arguments",
+              "description": "Additional flags passed to make before the targets.",
+              "kind": "arguments"
+            }
+          ],
+          "arguments": [
+            "${optionArguments}",
+            "${field:makefile}",
+            "${field:makeArguments}",
+            "${field:targets}",
+            "${field:variables}"
+          ]
+        }
+      ],
+      "diagnostics": {
+        "decoder": "lineMatcher",
+        "patterns": [
+          {
+            "regex": "^([^\\s:][^:]*):(\\d+):\\s*\\*\\*\\*\\s*(.+)$",
+            "file": 1,
+            "line": 2,
+            "message": 3,
+            "defaultSeverity": "error"
+          },
+          {
+            "regex": "^([^\\s:][^:]*):(\\d+):(\\d+):\\s*(error|warning):\\s*(.+)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+          },
+          {
+            "regex": "^([^\\s:][^:]*\\.go):(\\d+):(?:(\\d+):)?\\s*(.+)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "message": 4,
+            "defaultSeverity": "error"
+          }
+        ]
+      },
+      "sync": {
+        "watch": [
+          "GNUmakefile",
+          "Makefile",
+          "makefile"
+        ]
+      }
+    }
+  ],
+  "toolDefinitions": [
+    {
+      "id": "make",
+      "displayName": "Make",
+      "icon": {
+        "path": "icons/makefile.svg",
+        "darkPath": "icons/makefile-dark.svg",
+        "mode": "original"
+      },
+      "category": "build",
+      "executableLayouts": [
+        {
+          "path": "libexec/gnubin/make",
+          "platforms": [
+            "macos",
+            "linux"
+          ]
+        },
+        {
+          "path": "bin/gmake",
+          "platforms": [
+            "macos",
+            "linux"
+          ]
+        },
+        {
+          "path": "bin/make",
+          "platforms": [
+            "macos",
+            "linux"
+          ]
+        },
+        {
+          "path": "usr/bin/make.exe",
+          "platforms": [
+            "windows"
+          ]
+        },
+        {
+          "path": "mingw64/bin/mingw32-make.exe",
+          "platforms": [
+            "windows"
+          ]
+        },
+        {
+          "path": "bin/make.exe",
+          "platforms": [
+            "windows"
+          ]
+        },
+        {
+          "path": "bin/mingw32-make.exe",
+          "platforms": [
+            "windows"
+          ]
+        }
+      ],
+      "executables": [
+        {
+          "id": "pinned",
+          "kind": "setting",
+          "settingID": "executable",
+          "layer": "project"
+        },
+        {
+          "id": "project-request",
+          "kind": "toolchain",
+          "scope": "project"
+        },
+        {
+          "id": "default",
+          "kind": "setting",
+          "settingID": "executable",
+          "layer": "global"
+        },
+        {
+          "id": "global-request",
+          "kind": "toolchain",
+          "scope": "global"
+        },
+        {
+          "id": "shell-make",
+          "kind": "command",
+          "command": "make"
+        },
+        {
+          "id": "shell-gmake",
+          "kind": "command",
+          "command": "gmake"
+        },
+        {
+          "id": "shell-mingw32-make",
+          "kind": "command",
+          "command": "mingw32-make",
+          "platforms": [
+            "windows"
+          ]
+        },
+        {
+          "id": "detected",
+          "kind": "toolchain",
+          "scope": "installed"
+        }
+      ],
+      "version": {
+        "arguments": [
+          "--version"
+        ],
+        "pattern": "GNU Make (\\d+(?:\\.\\d+)*)"
+      },
+      "discovery": [
+        {
+          "root": {
+            "kind": "absolute",
+            "path": "/opt/homebrew/Cellar"
+          },
+          "pattern": "make/*",
+          "platforms": [
+            "macos"
+          ]
+        },
+        {
+          "root": {
+            "kind": "absolute",
+            "path": "/usr/local/Cellar"
+          },
+          "pattern": "make/*",
+          "platforms": [
+            "macos"
+          ]
+        },
+        {
+          "root": {
+            "kind": "absolute",
+            "path": "/Library/Developer/CommandLineTools"
+          },
+          "pattern": "usr",
+          "platforms": [
+            "macos"
+          ]
+        },
+        {
+          "root": {
+            "kind": "absolute",
+            "path": "/home/linuxbrew/.linuxbrew/Cellar"
+          },
+          "pattern": "make/*",
+          "platforms": [
+            "linux"
+          ]
+        },
+        {
+          "root": {
+            "kind": "absolute",
+            "path": "/"
+          },
+          "pattern": "usr",
+          "platforms": [
+            "linux"
+          ]
+        },
+        {
+          "root": {
+            "kind": "home"
+          },
+          "pattern": "scoop/apps/make/current",
+          "platforms": [
+            "windows"
+          ]
+        },
+        {
+          "root": {
+            "kind": "absolute",
+            "path": "C:/"
+          },
+          "pattern": "msys64",
+          "platforms": [
+            "windows"
+          ]
+        }
+      ],
+      "commands": [
+        "make",
+        "gmake",
+        "mingw32-make"
+      ],
+      "launch": [
+        "${executable}",
+        "${arguments}"
+      ]
+    }
+  ],
+  "backend": {
+    "launch": {
+      "kind": "packaged",
+      "path": "bin/backend"
+    }
+  }
+}

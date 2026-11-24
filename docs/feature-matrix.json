@@ -1,0 +1,46 @@
+{
+  "pluginID": "io.github.lithe-idea.makefile-build",
+  "features": [
+    {
+      "id": "makefile-model-and-targets",
+      "title": "Makefile detection and target discovery (GNU Make database with static parser fallback)",
+      "platforms": {
+        "macos": "implemented-unverified-in-host",
+        "windows": "unverified",
+        "linux": "unverified"
+      },
+      "evidence": [
+        "io.github.lithe-idea.makefile-build/plugin.json",
+        "backend/src/database.rs",
+        "backend/src/parser.rs",
+        "backend/src/model.rs"
+      ]
+    },
+    {
+      "id": "makefile-unified-run-configurations",
+      "title": "Unified auto-discovered and user-created Makefile Target run configurations and Before Launch task",
+      "platforms": {
+        "macos": "implemented-unverified-in-host",
+        "windows": "unverified",
+        "linux": "unverified"
+      },
+      "evidence": [
+        "io.github.lithe-idea.makefile-build/plugin.json",
+        "io.github.lithe-idea.makefile-build/l10n/zh-Hans.json"
+      ]
+    },
+    {
+      "id": "makefile-toolchain-and-settings-view",
+      "title": "Registered Make toolchain definition (Build Tools category) and Makefile settings region view",
+      "platforms": {
+        "macos": "implemented-unverified-in-host",
+        "windows": "unverified",
+        "linux": "unverified"
+      },
+      "evidence": [
+        "io.github.lithe-idea.makefile-build/plugin.json",
+        "backend/src/view.rs"
+      ]
+    }
+  ]
+}

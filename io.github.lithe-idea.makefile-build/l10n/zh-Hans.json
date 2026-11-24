@@ -1,0 +1,93 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Lithe-IDEA/Lithe-core-rust/main/shared/plugins/contract/v1/plugin-l10n.schema.json",
+  "settingRegions": {
+    "makefile": {
+      "keywords": [
+        "Make 程序",
+        "工具链",
+        "查找顺序",
+        "目标发现"
+      ]
+    }
+  },
+  "buildOptions": {
+    "makefile": {
+      "file": {
+        "displayName": "Makefile 文件",
+        "description": "指定要使用的 Makefile，代替项目根目录默认的 GNUmakefile、Makefile 或 makefile。"
+      },
+      "jobs": {
+        "displayName": "并行任务数",
+        "description": "同时运行的最大任务数（-j）。留空表示串行执行。"
+      },
+      "alwaysMake": {
+        "displayName": "总是重新构建 (-B)",
+        "description": "无条件重新构建所有目标，忽略文件时间戳。"
+      },
+      "dryRun": {
+        "displayName": "空跑模式 (-n)",
+        "description": "仅打印将要执行的命令，不实际运行。"
+      },
+      "keepGoing": {
+        "displayName": "出错后继续 (-k)",
+        "description": "遇到错误后尽可能继续执行其他目标，不立即停止。"
+      }
+    }
+  },
+  "runConfigurationTypes": {
+    "makefile": {
+      "target": {
+        "displayName": "Makefile 目标",
+        "description": "运行一个或多个 Makefile 目标，支持传入变量和 make 参数。",
+        "fields": {
+          "targets": {
+            "title": "目标",
+            "description": "一个或多个用空格分隔的目标名，例如 run、dev 或 run dev。",
+            "placeholder": "run dev"
+          },
+          "makefile": {
+            "title": "Makefile 文件",
+            "description": "可选的 Makefile 路径（通过 -f 传入）。留空使用工作目录中的默认 Makefile。"
+          },
+          "variables": {
+            "title": "变量",
+            "description": "传给 make 的变量覆盖，例如 ENV=dev PORT=8080。",
+            "placeholder": "ENV=dev"
+          },
+          "makeArguments": {
+            "title": "Make 参数",
+            "description": "放在目标之前传给 make 的附加标志，例如 -j4 或 -B。",
+            "placeholder": "-j4"
+          }
+        }
+      }
+    }
+  },
+  "beforeLaunchTasks": {
+    "makefile": {
+      "run-target": {
+        "displayName": "运行 Makefile 目标",
+        "description": "在启动运行配置前运行一个或多个 Makefile 目标。",
+        "fields": {
+          "targets": {
+            "title": "目标",
+            "description": "一个或多个用空格分隔的 Makefile 目标名，例如 generate 或 build。",
+            "placeholder": "generate"
+          },
+          "makefile": {
+            "title": "Makefile 文件",
+            "description": "可选的 Makefile 路径（通过 -f 传入）。"
+          },
+          "variables": {
+            "title": "变量",
+            "description": "传给 make 的变量覆盖，例如 CGO_ENABLED=0。"
+          },
+          "makeArguments": {
+            "title": "Make 参数",
+            "description": "放在目标之前传给 make 的附加标志。"
+          }
+        }
+      }
+    }
+  }
+}
